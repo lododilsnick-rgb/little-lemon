@@ -1,0 +1,12 @@
+{
+  "name": "My React App",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dsznajder.es7-react-js-snippets",
+        "formulahendry.auto-rename-tag",
+        "shardulm94.trailing-spaces"
+      ]
+    }
+  }
+}
