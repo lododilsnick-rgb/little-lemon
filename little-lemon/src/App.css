@@ -32,7 +32,82 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+/* 1. Reset defaults for the navigation bar */
+.nav-links {
+  list-style: none;
+  /* Removes bullet points */
+  margin: 0;
+  /* Resets default browser margins */
+  padding: 0;
+  /* Resets default browser padding */
+  display: flex;
+  /* Lays items out horizontally */
+  gap: 20px;
+  /* Creates clean, even spacing between items */
+  background-color: #333;
+  /* Dark background container color */
+  padding: 10px 20px;
+  /* Inner padding around the entire bar */
+}
+
+/* 2. Style the actual links */
+.nav-links a {
+  text-decoration: none;
+  /* Removes the default blue underline */
+  color: #ffffff;
+  /* White text color */
+  font-family: sans-serif;
+  font-size: 16px;
+  padding: 8px 12px;
+  /* Increases the clickable target area */
+  display: block;
+  /* Ensures proper padding box behavior */
+  transition: all 0.3s ease;
+  /* Smooth transition effect for hover states */
+}
+
+/* 3. Interactive hover state */
+.nav-links a:hover {
+  color: #00bcd4;
+  /* Changes text color on mouse hover */
+  background-color: #444;
+  /* Slight background highlight */
+  border-radius: 4px;
+  /* Softens edges of the highlighted area */
+}
+
+/* 4. Active/Current page state */
+.nav-links a.active {
+  color: #00bcd4;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .nav-links {
+    display: none;
+    /* Hide regular menu on small screens */
+  }
+}
+
+/* 1. Header Container */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  /* Pushes logo to left, nav to right */
+  align-items: center;
+  /* Vertically centers everything */
+  padding: 1rem 5%;
+  /* Flexible spacing on the sides */
+  /* background-color: #ffffff; */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  /* Keeps navbar at top while scrolling */
+  top: 0;
+  z-index: 100;
 }
