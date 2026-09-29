@@ -1,0 +1,29 @@
+/* 1. Define default Light Mode variables */
+:root {
+  --primary1: #495e57;
+  --primary2: #f4ce14;
+  --primary3: #fff;
+  --secondary1: #ee9972;
+  --secondary2: #fbdabb;
+  --secondary3: #edefee;
+  --secondary4: #333;
+}
+
+/* 2. Overwrite variables if the browser requests Dark Mode */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+  --primary1: #495e57;
+  --primary2: #f4ce14;
+  --secondary1: #ee9972;
+  --secondary2: #fbdabb;
+  --secondary3: #edefee;
+  --secondary4: #333;  
+  }
+} */
+
+body {
+  background-color: var(--primary3);
+  color: var(--secondary4);
+  transition: background-color 0.3s, color 0.3s;
+  /* Smooth transition */
+}

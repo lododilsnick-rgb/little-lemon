@@ -5,10 +5,10 @@ import About from './pages/About';
 
 function App() {
   return (
-    <div className="App">
+    <div class="app">
       <BrowserRouter>
-        <header className="app-header">
-          <div class="logo">
+        <header class="app-header">
+          <div class="app-logo">
             <a href="#home">
               <img src="/images/Logo.svg" alt="logo" />
             </a>
