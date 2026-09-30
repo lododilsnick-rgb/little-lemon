@@ -258,6 +258,21 @@
   line-height: 1.5;
 }
 
+.booking {
+  display: flex;
+  justify-content: center;
+  align-items: normal;
+  padding: 1rem 10%;
+  /* background-color: green; */
+}
+
+.booking-form {
+  display: grid;
+  max-width: 200px;
+  gap: 20px;
+  /* background-color: blue; */
+}
+
 @media (max-width: 600px) {
   .nav-links {
     display: none;
