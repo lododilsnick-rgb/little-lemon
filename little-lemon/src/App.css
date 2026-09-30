@@ -26,6 +26,7 @@
 /* 1. Header Container */
 .app-header {
   display: flex;
+  background-color: var(--primary3);
   justify-content: space-between;
   /* Pushes logo to left, nav to right */
   align-items: center;
@@ -46,6 +47,7 @@
   background-color: var(--primary1);
   text-align: left;
   padding: 1rem 10%;
+  margin-bottom: 30px;
 }
 
 .app-hero-title {
@@ -60,27 +62,45 @@
   color: var(--secondary3);
 }
 
-.app-hero img {
-  max-width: 40vw;
-  max-height: 40vw;
-}
-
 .app-hero-img-container {
-  max-width: 40vw;
-  max-height: 40vw;
-  object-fit: cover; /* Forces the image to fill the box & crop overflow */
-  object-position: center; /* Default. Change to 'top', 'bottom', or percentages like '50% 20%' */
+  position: relative;
+  width: 50vw;
+  max-width: 300px;
 }
 
-.app-hero button {
+.app-hero-img-container img {
+  position: absolute;
+  width: 100%;
+  /* Fills the width of its parent container */
+  aspect-ratio: 1 / 1;
+  /* Forces the box to be a perfect square */
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.app-hero-button {
   background-color: var(--primary2);
   color: var(--secondary4);
   border-radius: 10px;
   font-weight: bold;
+  border: none;
+  appearance: none;
+  transition: all 0.3s ease;
+  filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.5));
+  padding: 10px;
+}
+
+.app-hero-button:hover {
+  background-color: var(--secondary2);
+  color: var(--secondary4);
 }
 
 .app-link {
   color: #61dafb;
+}
+
+.nav {
+  background-color: var(--primary3);
 }
 
 /* 1. Reset defaults for the navigation bar */
@@ -142,10 +162,100 @@
   padding: 1rem 10%;
 }
 
+.specials-title {
+  display: flex;
+  padding: 1rem 10%;
+  justify-content: space-between;
+  text-align: left;
+}
+
 .special-item {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Pushes the last item to the bottom */
   background-color: var(--secondary3);
   border-radius: 10px;
+  text-align: left;
+}
+
+.special-item-title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+.special-item-price {
+  color: var(--secondary2);
+}
+
+.special-item-text {
+  padding: 10px;
+}
+
+.special-item button {
+  border: none;
+}
+
+.special-item button img {
+  max-width: 15px;
+}
+
+.special-item-img-container img {
+  width: 100%;
+  /* Fills the width of its parent container */
+  aspect-ratio: 1 / 1;
+  /* Forces the box to be a perfect square */
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.specials-title-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.display-title-text {
+  font-family: "Markazi Text", serif;
+  font-size: 64pt;
+}
+
+.sub-title-text {
+  font-family: "Markazi Text", serif;
+  font-size: 40pt;
+}
+
+.lead-text {
+  font-family: "Karla", sans-serif;
+  font-size: 18pt;
+}
+
+.section-title-text {
+  font-family: "Karla", sans-serif;
+  text-transform: uppercase;
+  font-size: 20pt;
+  font-weight: bolder;
+}
+
+.section-categories-text {
+  font-family: "Karla", sans-serif;
+  font-size: 16pt;
+  font-weight: bolder;
+}
+
+.card-title-text {
+  font-family: "Karla", sans-serif;
+  font-size: 18pt;
+  font-weight: bold;
+}
+
+.card-paragraph-text {
+  font-family: "Karla", sans-serif;
+  font-size: 16pt;
+  font-weight: normal;
+  max-width: 65ch;
+  line-height: 1.5;
 }
 
 @media (max-width: 600px) {
