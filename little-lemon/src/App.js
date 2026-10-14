@@ -1,12 +1,13 @@
 import './App.css';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from "react-router";
+//import {BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
-import Booking from './pages/Booking';
+import BookingForm from './pages/BookingForm';
 import { useReducer } from 'react';
 
 function App() {
-  function reducer(state, action) {
+  function updateTimes(state, action) {
     console.log('reducer state:', state);
     console.log('reducer action:', action);
     var newArray = state.availableTimes;
@@ -21,7 +22,7 @@ function App() {
     return intialAvailableTimes;
   }
 
-  const [availableTimeState, availableTimeDispatch] = useReducer(reducer,
+  const [availableTimeState, availableTimeDispatch] = useReducer(updateTimes,
     { availableTimes: initializeTimes() });
 
   const atReducer = {
@@ -60,7 +61,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/booking"
-              element={<Booking availableTimeState={availableTimeState}
+              element={<BookingForm availableTimeState={availableTimeState}
                 availableTimeDispatch={availableTimeDispatch}
               />} />
           </Routes>

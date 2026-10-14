@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Booking({ availableTimeState, availableTimeDispatch }) {
+export default function BookingForm({ availableTimeState, availableTimeDispatch }) {
   const [formData, setFormData] = useState({ resDate: (new Date()), resTime: '' });
 
   const handleChange = (e) => {
@@ -17,12 +17,13 @@ export default function Booking({ availableTimeState, availableTimeDispatch }) {
 
   // const availableTimes = ['16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
   console.log('booking availableTimeState:', availableTimeState);
-  
+
   return (
     <div class="booking card-paragraph-text">
       <form class="booking-form"
         onSubmit={handleSubmit}>
         <div class="section-title-text">Reservations</div>
+        <div class="section-title-text">Book Now</div>
         <label class="card-title-text"
           for="res-date">Choose date</label>
         <input
