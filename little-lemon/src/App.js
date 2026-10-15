@@ -1,34 +1,84 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Link } from "react-router";
-//import {BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
-import BookingForm from './pages/BookingForm';
-import { useReducer } from 'react';
+import BookingPage from './pages/BookingPage';
+import { useReducer, useState, useEffect } from 'react';
+import { fetchAPI, submitAPI } from './api';
+
+/**
+ *
+ * @param {'availableTimes':['hh:mm'], 'bookingSlots':[{'date':'mm-dd-yyyy', 'time':'hh:mm'}]} state The used dates and times.
+ * @param { type: 'reserve-time', 'bookingTime': {'date':'mm-dd-yyyy', 'time':'hh:mm'} } action The action to perform on state data.
+ *  action.types: 'reserve-time'
+ *  action.time: {'mm-dd-yyyy': ['hh:mm']}
+ * @returns object with times taken {'mm-dd-yyyy':['hh:mm']}
+ */
+export function updateTimes(state, action) {
+  console.log('reducer state:', state);
+  console.log('reducer action:', action);
+  var newState = state;
+
+  switch (action.type) {
+    case 'reserve-time':
+      newState = reserveTime(state, action);
+
+      break;
+    case 'get-times-for-date':
+      newState = getTimesForDate(state, action);
+
+      break;
+    default:
+      newState = state;
+  };
+
+  return newState;
+}
+
+function reserveTime(state, action) {
+  if (!state.bookedTimes[action.bookingTime.date]) {
+    state.bookedTimes[action.bookingTime.date] = [];
+  }
+
+  state.bookedTimes[action.bookingTime.date].push(action.bookingTime.time);
+
+  return state;
+}
+
+function getTimesForDate(state, action) {
+  return state;
+}
+
+export function formatDate(date) {
+  var dateString = (new Intl.DateTimeFormat('en-US')).format(date)
+  return dateString.replaceAll('/', '-');
+}
+
+let INITIAL_TIMES = [];
+
+/**
+ *
+ * @returns ['hh:mm']
+ */
+export function initializeTimes() {
+  return INITIAL_TIMES;
+}
 
 function App() {
-  function updateTimes(state, action) {
-    console.log('reducer state:', state);
-    console.log('reducer action:', action);
-    var newArray = state.availableTimes;
-    newArray.shift();
-    console.log('reducer newArray:', newArray);
-    return { availableTimes: newArray }
-  }
+  const [availableTimes, setAvailableTimes] = useState(null);
 
-  let intialAvailableTimes = ['14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
-
-  function initializeTimes() {
-    return intialAvailableTimes;
-  }
+  //Runs on first render.
+  // useEffect(() => {
+  //   INITIAL_TIMES = fetchAPI(new Date());
+  //   console.log(`Initial times: {INITIAL_TIMES}`);
+  // }, []);
 
   const [availableTimeState, availableTimeDispatch] = useReducer(updateTimes,
-    { availableTimes: initializeTimes() });
-
-  const atReducer = {
-    availableTimeState: availableTimeState,
-    availableTimeDispatch: availableTimeDispatch
-  };
+    {
+      availableTimes: initializeTimes(),
+      currentDate: new Date(),
+      bookingSlots: []
+    });
 
   return (
     <div class="app">
@@ -61,7 +111,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/booking"
-              element={<BookingForm availableTimeState={availableTimeState}
+              element={<BookingPage availableTimeState={availableTimeState}
                 availableTimeDispatch={availableTimeDispatch}
               />} />
           </Routes>
@@ -73,3 +123,4 @@ function App() {
 }
 
 export default App;
+

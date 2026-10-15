@@ -1,12 +1,15 @@
 import { useState } from 'react';
 
+export const ALL_TIMES = ['14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
+
 export default function BookingForm({ availableTimeState, availableTimeDispatch }) {
   const [formData, setFormData] = useState({ resDate: (new Date()), resTime: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Dynamically update the state matching the input's name attribute
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    //setFormData((prev) => ({ ...prev, [name]: value }));
+    availableTimeDispatch({ 'type': 'get-times-for-date', 'date': formData })
   };
 
   const handleSubmit = (e) => {
@@ -15,8 +18,11 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
     availableTimeDispatch({ type: 'reserve-time', time: formData })
   };
 
-  // const availableTimes = ['16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
   console.log('booking availableTimeState:', availableTimeState);
+
+  function getAvailableTimesForSelectedDate(){
+    return ALL_TIMES;
+  }
 
   return (
     <div class="booking card-paragraph-text">
