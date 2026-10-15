@@ -1,28 +1,78 @@
 import { useState } from 'react';
 
-export const ALL_TIMES = ['14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
-
 export default function BookingForm({ availableTimeState, availableTimeDispatch }) {
-  const [formData, setFormData] = useState({ resDate: (new Date()), resTime: '' });
+  const [formData, setFormData] = useState({
+    //resDate: availableTimeState.currentDate,
+    resTime: availableTimeState.availableTimes[0],
+    occasion: 'Birthday',
+    guests: 1
+  });
+
+  const [errors, setErrors] = useState({ errorCount: 0 });
+
+  // Single function to validate fields dynamically
+  const isValid = (name, value) => {
+    let errorMsg = '';
+
+    switch (name) {
+      case "resDate":
+        if (!value) {
+          errorMsg = "Reservation date is required.";
+          console.log(`error resDate`);
+        }
+        break;
+      case 'resTime':
+        if (!value) {
+          errorMsg = "Reservation time is required.";
+        }
+        break;
+      default:
+        ;;
+    };
+
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+
+    return (errorMsg) ? false : true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Dynamically update the state matching the input's name attribute
-    //setFormData((prev) => ({ ...prev, [name]: value }));
-    availableTimeDispatch({ 'type': 'get-times-for-date', 'date': formData })
+    if (isValid(name, value)) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`Name: ${name}, value: ${value}`);
+
+    if (isValid(name, value)) {
+      // Dynamically update the state matching the input's name attribute
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      availableTimeDispatch({ 'type': 'change-date', 'date': value })
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevents page reload
-    console.log('Submitted Data:', formData);
-    availableTimeDispatch({ type: 'reserve-time', time: formData })
+    let hasError = !isValid("resDate", formData.resDate);
+    hasError |= !isValid("resTime", formData.resTime);
+
+    if (hasError) {
+      setTimeout(function () {
+        alert("The data you are trying to submit contains errors!");
+      }, 10);
+    } else {
+      alert("Form submitted successfully!");
+      availableTimeDispatch({
+        type: 'reserve-time',
+        bookingSlot: formData
+      });
+    }
   };
 
   console.log('booking availableTimeState:', availableTimeState);
-
-  function getAvailableTimesForSelectedDate(){
-    return ALL_TIMES;
-  }
 
   return (
     <div class="booking card-paragraph-text">
@@ -37,8 +87,10 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
           id="resDate"
           name="resDate"
           value={formData.resDate}
-          onChange={handleChange}
+          onChange={handleDateChange}
         />
+        {/* Inline Error Message */}
+        {errors.resDate && <span style={{ color: "red", fontSize: "12px" }}>{errors.resDate}</span>}
         <label class="card-title-text"
           for="res-time">Choose time</label>
         <select
@@ -52,14 +104,24 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
             </option>
           ))}
         </select>
+        {/* Inline Error Message */}
+        {errors.resTime && <span style={{ color: "red", fontSize: "12px" }}>{errors.resTime}</span>}
         <label class="card-title-text"
           for="guests">Number of guests</label>
-        <input type="number" placeholder="1" min="1" max="10" id="guests" />
+        <input type="number"
+          placeholder="1"
+          min="1"
+          max="10"
+          id="guests"
+          name="guests"
+          onChange={handleChange} />
         <label class="card-title-text"
           for="occasion">Occasion</label>
-        <select id="occasion">
-          <option>Birthday</option>
-          <option>Anniversary</option>
+        <select id="occasion"
+          name="occasion"
+          onChange={handleChange}>
+          <option value="Birthday">Birthday</option>
+          <option value="Anniversary">Anniversary</option>
         </select>
         <button class="app-hero-button"
           type="submit">

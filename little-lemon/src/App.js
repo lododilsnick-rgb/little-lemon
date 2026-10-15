@@ -1,22 +1,25 @@
 import './App.css';
-import { BrowserRouter, Routes, Route, Link } from "react-router";
+import { useReducer, useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router";
+
 import Home from './pages/Home';
 import About from './pages/About';
 import BookingPage from './pages/BookingPage';
-import { useReducer, useState, useEffect } from 'react';
+import ConfirmedBooking from './pages/ConfirmedBooking';
+
 import { fetchAPI, submitAPI } from './api';
 
 /**
  *
  * @param {'availableTimes':['hh:mm'], 'bookingSlots':[{'date':'mm-dd-yyyy', 'time':'hh:mm'}]} state The used dates and times.
- * @param { type: 'reserve-time', 'bookingTime': {'date':'mm-dd-yyyy', 'time':'hh:mm'} } action The action to perform on state data.
+ * @param { type: 'reserve-time', 'data': {'date':'mm-dd-yyyy', 'time':'hh:mm'} } action The action to perform on state data.
  *  action.types: 'reserve-time'
  *  action.time: {'mm-dd-yyyy': ['hh:mm']}
  * @returns object with times taken {'mm-dd-yyyy':['hh:mm']}
  */
 export function updateTimes(state, action) {
   console.log('reducer state:', state);
-  console.log('reducer action:', action);
+  console.log('reducer action:', action.type);
   var newState = state;
 
   switch (action.type) {
@@ -24,9 +27,17 @@ export function updateTimes(state, action) {
       newState = reserveTime(state, action);
 
       break;
-    case 'get-times-for-date':
-      newState = getTimesForDate(state, action);
+    case 'navigate-to-confirmation':
+      newState = navigateToConfirmation(state, action);
 
+      break;
+    case 'set-times-for-date':
+      console.log('set-times-for-date')
+      newState = setTimesForDate(state, action);
+      break;
+    case 'change-date':
+      console.log('change-date')
+      newState = changeDate(state, action);
       break;
     default:
       newState = state;
@@ -36,17 +47,74 @@ export function updateTimes(state, action) {
 }
 
 function reserveTime(state, action) {
-  if (!state.bookedTimes[action.bookingTime.date]) {
-    state.bookedTimes[action.bookingTime.date] = [];
+  // if (!state.bookedTimes[action.bookingTime.date]) {
+  //   state.bookedTimes[action.bookingTime.date] = [];
+  // }
+
+  // state.bookedTimes[action.bookingTime.date].push(action.bookingTime.time);
+  console.log(`reserveTime`);
+  console.log(action);
+  let newState = state;
+
+  if (action.bookingSlot) {
+    let found = state.bookingSlots.find((item) => {
+      // console.log(`item`);
+      // console.log(item);
+      // console.log(`action item`);
+      // console.log(action.bookingSlot);
+      return (item.resDate === action.bookingSlot.resDate && item.resTime === action.bookingSlot.resTime);
+    });
+
+    console.log(`found: ${found}`);
+
+    if (!found) {
+      console.log(`adding slot`);
+      console.log(action.bookingSlot);
+      newState = {
+        ...state,
+        bookingSlots: state.bookingSlots.concat([action.bookingSlot]),
+        currentCurrentBookingToSubmit: action.bookingSlot
+      };
+
+      newState.bookingSlots.sort((a, b) => {
+        console.log(`a: ${a.resDate}, b: ${b.resDate}`);
+
+        if (a.resDate < b.resDate) {
+          return -1;
+        }
+
+        if (a.resDate > b.resDate) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      //trigger api useEffect
+
+    }
   }
 
-  state.bookedTimes[action.bookingTime.date].push(action.bookingTime.time);
-
-  return state;
+  return newState;
 }
 
-function getTimesForDate(state, action) {
-  return state;
+function setTimesForDate(state, action) {
+  let newState = { ...state, availableTimes: action.data.availableTimes };
+
+  return newState;
+}
+
+function navigateToConfirmation(state, action) {
+  let newState = { ...state, action: action };
+
+  return newState;
+}
+
+function changeDate(state, action) {
+  console.log(`changeDate action:  ${action.type}, ${action.date}`);
+  let newState = { ...state, currentDate: action.date };
+
+  return newState;
 }
 
 export function formatDate(date) {
@@ -64,21 +132,48 @@ export function initializeTimes() {
   return INITIAL_TIMES;
 }
 
+function submitForm(formData) {
+  return submitAPI(formData);
+}
+
 function App() {
-  const [availableTimes, setAvailableTimes] = useState(null);
-
-  //Runs on first render.
-  // useEffect(() => {
-  //   INITIAL_TIMES = fetchAPI(new Date());
-  //   console.log(`Initial times: {INITIAL_TIMES}`);
-  // }, []);
-
   const [availableTimeState, availableTimeDispatch] = useReducer(updateTimes,
     {
       availableTimes: initializeTimes(),
-      currentDate: new Date(),
-      bookingSlots: []
+      currentDate: formatDate(new Date()),
+      bookingSlots: [],
+      currentCurrentBookingToSubmit: null
     });
+
+  //Runs on first render.
+  useEffect(() => {
+    let currentDate = new Date();
+    let dateString = formatDate(currentDate);
+    INITIAL_TIMES = fetchAPI(new Date());
+    console.log(`Initial times: ${INITIAL_TIMES}`);
+    availableTimeDispatch({ 'type': 'set-times-for-date', 'data': { 'date': dateString, 'availableTimes': INITIAL_TIMES } })
+  }, []);
+
+  //Runs when current date changes.
+  useEffect(() => {
+    let currentDate = new Date(availableTimeState.currentDate);
+    let availableTimes = fetchAPI(currentDate);
+    console.log(`use effect got available times: ${availableTimes}`);
+    availableTimeDispatch({ 'type': 'set-times-for-date', 'data': { 'date': availableTimeState.currentDate, 'availableTimes': availableTimes } })
+  }, [availableTimeState.currentDate]);
+
+  //submit current booking
+  useEffect(() => {
+    if (availableTimeState.currentCurrentBookingToSubmit) {
+      console.log(`use effect call booking api: ${availableTimeState.currentCurrentBookingToSubmit}`);
+      let success = submitForm(availableTimeState.currentCurrentBookingToSubmit);
+      console.log(`submit success: ${success}`);
+      
+      if (success) {
+        availableTimeDispatch({ 'type': 'navigate-to-confirmation' })
+      }
+    }
+  }, [availableTimeState.currentCurrentBookingToSubmit]);
 
   return (
     <div class="app">
@@ -114,6 +209,8 @@ function App() {
               element={<BookingPage availableTimeState={availableTimeState}
                 availableTimeDispatch={availableTimeDispatch}
               />} />
+            <Route path="/confirmed-booking"
+              element={<ConfirmedBooking availableTimeState={availableTimeState} />} />
           </Routes>
         </main>
         <footer>The footer</footer>

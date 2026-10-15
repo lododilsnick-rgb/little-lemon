@@ -286,3 +286,15 @@
     align-items: center;
   }
 }
+
+.booking-slot-grid-container {
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  padding: 3px;
+  width: 100%;
+}
+
+.booking-slot-grid-container div {
+  padding: 3px;
+  text-align: center;
+}
