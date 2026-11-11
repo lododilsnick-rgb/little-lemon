@@ -1,6 +1,6 @@
 import './App.css';
-import { useReducer, useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router";
+import { useReducer, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from "react-router";
 
 import Home from './pages/Home';
 import About from './pages/About';
@@ -8,6 +8,8 @@ import BookingPage from './pages/BookingPage';
 import ConfirmedBooking from './pages/ConfirmedBooking';
 
 import { fetchAPI, submitAPI } from './api';
+
+const LOCAL_STORAGE_STATE_MACHINE_KEY = "LOCAL_STORAGE_STATE_MACHINE_KEY";
 
 /**
  *
@@ -17,7 +19,7 @@ import { fetchAPI, submitAPI } from './api';
  *  action.time: {'mm-dd-yyyy': ['hh:mm']}
  * @returns object with times taken {'mm-dd-yyyy':['hh:mm']}
  */
-export function updateTimes(state, action) {
+export function reduceAvailableTimeState(state, action) {
   console.log('reducer state:', state);
   console.log('reducer action:', action.type);
   var newState = state;
@@ -34,34 +36,29 @@ export function updateTimes(state, action) {
     case 'set-times-for-date':
       console.log('set-times-for-date')
       newState = setTimesForDate(state, action);
+
       break;
     case 'change-date':
       console.log('change-date')
       newState = changeDate(state, action);
+
       break;
     default:
       newState = state;
   };
 
+  saveBookingSlots(newState.bookingSlots);
+
   return newState;
 }
 
 function reserveTime(state, action) {
-  // if (!state.bookedTimes[action.bookingTime.date]) {
-  //   state.bookedTimes[action.bookingTime.date] = [];
-  // }
-
-  // state.bookedTimes[action.bookingTime.date].push(action.bookingTime.time);
   console.log(`reserveTime`);
   console.log(action);
   let newState = state;
 
   if (action.bookingSlot) {
     let found = state.bookingSlots.find((item) => {
-      // console.log(`item`);
-      // console.log(item);
-      // console.log(`action item`);
-      // console.log(action.bookingSlot);
       return (item.resDate === action.bookingSlot.resDate && item.resTime === action.bookingSlot.resTime);
     });
 
@@ -89,9 +86,6 @@ function reserveTime(state, action) {
 
         return 0;
       });
-
-      //trigger api useEffect
-
     }
   }
 
@@ -129,7 +123,35 @@ let INITIAL_TIMES = [];
  * @returns ['hh:mm']
  */
 export function initializeTimes() {
-  return INITIAL_TIMES;
+  return fetchAPI(new Date());
+}
+
+export function updateTimes(date) {
+  return fetchAPI(date);
+}
+
+/**
+ * @typedef {Object} Slot
+ * @property {String} resDate
+ * @property {String} resTime
+ * @property {number} guests
+ * @property {String} occasion
+ */
+
+/**
+ * Save slot to local storage
+ * @param {Slot[]} slots
+ */
+export function saveBookingSlots(slots) {
+  window.localStorage.setItem(LOCAL_STORAGE_STATE_MACHINE_KEY, JSON.stringify(slots));
+}
+
+/**
+ * Get slot from local storage
+ * @returns {Slot[]}
+ */
+export function getBookingSlots() {
+  return (window.localStorage.getItem(LOCAL_STORAGE_STATE_MACHINE_KEY)) ? JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_STATE_MACHINE_KEY)) : [];
 }
 
 function submitForm(formData) {
@@ -137,11 +159,11 @@ function submitForm(formData) {
 }
 
 function App() {
-  const [availableTimeState, availableTimeDispatch] = useReducer(updateTimes,
+  const [availableTimeState, availableTimeDispatch] = useReducer(reduceAvailableTimeState,
     {
       availableTimes: initializeTimes(),
       currentDate: formatDate(new Date()),
-      bookingSlots: [],
+      bookingSlots: getBookingSlots(),
       currentCurrentBookingToSubmit: null
     });
 
@@ -168,7 +190,7 @@ function App() {
       console.log(`use effect call booking api: ${availableTimeState.currentCurrentBookingToSubmit}`);
       let success = submitForm(availableTimeState.currentCurrentBookingToSubmit);
       console.log(`submit success: ${success}`);
-      
+
       if (success) {
         availableTimeDispatch({ 'type': 'navigate-to-confirmation' })
       }
@@ -178,14 +200,14 @@ function App() {
   return (
     <div class="app">
       <BrowserRouter>
-        <header class="app-header">
-          <div class="app-logo">
+        <header className="app-header">
+          <div className="app-logo">
             <a href="#home">
               <img src="/images/Logo.svg" alt="logo" />
             </a>
           </div>
           <nav>
-            <ul class="nav-links">
+            <ul className="nav-links">
               <li>
                 <Link to="/" style={{ marginRight: '10px' }}>Home</Link>
               </li>

@@ -1,7 +1,21 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import BookingForm from "./components/BookingForm.js";
-import App from "./App.js";
-import { initializeTimes, formatDate, updateTimes } from "./App.js";
+import { initializeTimes, formatDate, updateTimes, saveBookingSlots, getBookingSlots } from "./App.js";
+
+const BOOKING_SLOTS = [
+  {
+    "resDate": formatDate(new Date()),
+    "resTime": "11:30",
+    "occasion": "Birthday",
+    "guests": 12
+  },
+  {
+    "resDate": formatDate(new Date()),
+    "resTime": "20:30",
+    "occasion": "Anniversary",
+    "guests": 2
+  }
+];
 
 describe("Booking Form", () => {
   test("Renders the BookingForm heading", () => {
@@ -20,17 +34,37 @@ describe("Booking Form", () => {
   });
 
   test("Initialize times", () => {
-    expect(initializeTimes().bookedTimes).toEqual({});
+    let times = initializeTimes();
+    expect(times).not.toBeNull();
+
+    times.forEach((time, index) => {
+      expect(time).toMatch(/\d+:\d\d/);
+    });
   });
 
   test("Update times", () => {
-    let dateString = formatDate(new Date());
-    let timeString = '19:00';
-    let action = { 'type': 'reserve-time', 'bookingTime': { date: dateString, 'time': timeString } };
-    let newState = updateTimes(initializeTimes(), action);
-    console.log("newState");
-    console.log(newState);
-    expect(newState.bookedTimes[dateString].length).toEqual(1);
-    expect(newState.bookedTimes[dateString].find((element)=>element === timeString)).toEqual(timeString);
+    let theDate = new Date();
+    theDate.setDate(theDate.getDate() + 1);
+    let times = updateTimes(theDate);
+
+    expect(times).not.toBeNull();
+
+    times.forEach((time, index) => {
+      expect(time).toMatch(/\d+:\d\d/);
+    });
+  });
+
+  test("localstorage", () => {
+    saveBookingSlots(BOOKING_SLOTS);
+
+    let slots = getBookingSlots();
+    expect(slots).not.toBeNull();
+
+    slots.forEach((slot, index) => {
+      expect(slot.occasion).toBe(BOOKING_SLOTS[index].occasion);
+      expect(slot.guests).toBe(BOOKING_SLOTS[index].guests);
+      expect(slot.resDate).toBe(BOOKING_SLOTS[index].resDate);
+      expect(slot.resTime).toBe(BOOKING_SLOTS[index].resTime);
+    });
   });
 });

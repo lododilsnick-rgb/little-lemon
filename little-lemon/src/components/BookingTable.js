@@ -6,7 +6,7 @@ export default function BookingTable({ availableTimeState }) {
             {(availableTimeState.bookingSlots.length > 0) &&
                 <div>
                     <div>Booked Reservations</div>
-                    <div class="booking-slot-grid-container card-title-text">
+                    <div className="booking-slot-grid-container card-title-text">
                         <div>
                             Date
                         </div>

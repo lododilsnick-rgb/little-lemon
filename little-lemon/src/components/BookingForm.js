@@ -75,12 +75,12 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
   console.log('booking availableTimeState:', availableTimeState);
 
   return (
-    <div class="booking card-paragraph-text">
-      <form class="booking-form"
+    <div className="booking card-paragraph-text">
+      <form className="booking-form"
         onSubmit={handleSubmit}>
-        <div class="section-title-text">Reservations</div>
-        <div class="section-title-text">Book Now</div>
-        <label class="card-title-text"
+        <div className="section-title-text">Reservations</div>
+        <div className="section-title-text">Book Now</div>
+        <label className="card-title-text"
           for="res-date">Choose date</label>
         <input
           type="date"
@@ -91,8 +91,8 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
         />
         {/* Inline Error Message */}
         {errors.resDate && <span style={{ color: "red", fontSize: "12px" }}>{errors.resDate}</span>}
-        <label class="card-title-text"
-          for="res-time">Choose time</label>
+        <label className="card-title-text"
+          htmlfor="res-time">Choose time</label>
         <select
           id="resTime"
           name="resTime"
@@ -106,7 +106,7 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
         </select>
         {/* Inline Error Message */}
         {errors.resTime && <span style={{ color: "red", fontSize: "12px" }}>{errors.resTime}</span>}
-        <label class="card-title-text"
+        <label className="card-title-text"
           for="guests">Number of guests</label>
         <input type="number"
           placeholder="1"
@@ -115,7 +115,7 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
           id="guests"
           name="guests"
           onChange={handleChange} />
-        <label class="card-title-text"
+        <label className="card-title-text"
           for="occasion">Occasion</label>
         <select id="occasion"
           name="occasion"
@@ -123,7 +123,7 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
           <option value="Birthday">Birthday</option>
           <option value="Anniversary">Anniversary</option>
         </select>
-        <button class="app-hero-button"
+        <button className="app-hero-button"
           type="submit">
           Make Your reservation
         </button>

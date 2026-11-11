@@ -30,17 +30,17 @@ garnished with crunchy garlic and rosemary croutons.`
         }
     ];
     return (<>
-        <div class="specials-title">
-            <div class="section-title-text">
+        <div className="specials-title">
+            <div className="section-title-text">
                 This weeks specials!
             </div>
-            <div class="specials-title-button-container">
-                <button class="app-hero-button">
+            <div className="specials-title-button-container">
+                <button className="app-hero-button">
                     Online Menu
                 </button>
             </div>
         </div>
-        <div class="grid-container">
+        <div className="grid-container">
             {specialsData.map((dataItem) => (
                 <SpecialItem key={dataItem.id}
                     imageUrl={dataItem.imageUrl}

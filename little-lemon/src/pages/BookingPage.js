@@ -10,7 +10,7 @@ export default function BookingPage({ availableTimeState, availableTimeDispatch 
   }
 
   return (
-    <div class="grid-container">
+    <div className="grid-container">
       <BookingForm availableTimeState={availableTimeState}
                 availableTimeDispatch={availableTimeDispatch} />
       <BookingTable availableTimeState={availableTimeState} />

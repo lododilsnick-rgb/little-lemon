@@ -1,7 +1,7 @@
 
 export default function ConfirmedBooking({ availableTimeState }) {
   return (
-    <div class="grid-container">
+    <div className="grid-container">
        ConfirmedBooking
     </div>
   );
