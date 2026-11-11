@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router";
+
 export default function Hero() {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        //alert("Button clicked!");
+        navigate('/booking')
+    };
     return (
         <div className="app-hero">
             <div>
@@ -13,7 +21,8 @@ export default function Hero() {
                 </div>
                 <div>
                     <button className="app-hero-button"
-                        aria-label="Click to reserve a table">
+                        aria-label="Click to reserve a table"
+                        onClick={handleClick}>
                         Reserve a Table
                     </button>
                 </div>
