@@ -235,7 +235,9 @@ function App() {
               element={<ConfirmedBooking availableTimeState={availableTimeState} />} />
           </Routes>
         </main>
-        <footer>The footer</footer>
+        <footer>
+          Copyright Lulu 2026. All rights reserved.
+        </footer>
       </BrowserRouter>
     </div>
   );
