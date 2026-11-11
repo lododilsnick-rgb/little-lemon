@@ -35,7 +35,8 @@ garnished with crunchy garlic and rosemary croutons.`
                 This weeks specials!
             </div>
             <div className="specials-title-button-container">
-                <button className="app-hero-button">
+                <button className="app-hero-button"
+                    aria-label="Click to access the online menu">
                     Online Menu
                 </button>
             </div>

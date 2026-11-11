@@ -3,7 +3,8 @@ export default function SpecialItem(props) {
         <div className="special-item">
             <div>
                 <div className="special-item-img-container">
-                    <img src={props.imageUrl} />
+                    <img src={props.imageUrl}
+                        aria-label="Picture of the special item." />
                 </div>
                 <div className="special-item-text">
                     <div className="special-item-title card-title">
@@ -17,7 +18,8 @@ export default function SpecialItem(props) {
                 </div>
             </div>
             <div className="special-item-text">
-                <button className="">Order a delivery <img src="images/basket.svg" /></button>
+                <button className="">Order a delivery <img src="images/basket.svg"
+                    aria-label="Picture of basket" /></button>
             </div>
         </div>
     );

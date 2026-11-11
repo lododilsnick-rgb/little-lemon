@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import BookingForm from "./components/BookingForm.js";
+import { isValid } from "./components/BookingForm.js";
 import { initializeTimes, formatDate, updateTimes, saveBookingSlots, getBookingSlots } from "./App.js";
 
 const BOOKING_SLOTS = [
@@ -66,5 +67,17 @@ describe("Booking Form", () => {
       expect(slot.resDate).toBe(BOOKING_SLOTS[index].resDate);
       expect(slot.resTime).toBe(BOOKING_SLOTS[index].resTime);
     });
+  });
+
+  test("form validation function", () => {
+    let name = "resDate";
+    let value = formatDate(new Date());
+
+    let errorMessage = isValid(name, value);
+    expect(errorMessage).toBeNull();
+
+    value = null;
+    errorMessage = isValid(name, value);
+    expect(errorMessage).not.toBeNull();
   });
 });

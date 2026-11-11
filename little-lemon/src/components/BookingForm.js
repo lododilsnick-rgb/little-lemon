@@ -1,5 +1,28 @@
 import { useState } from 'react';
 
+export function isValid(name, value) {
+  let errorMsg = null;
+
+  switch (name) {
+    case "resDate":
+      if (!value) {
+        errorMsg = "Reservation date is required.";
+        console.log(`error resDate`);
+      }
+      break;
+    case 'resTime':
+      if (!value) {
+        errorMsg = "Reservation time is required.";
+      }
+      break;
+    default:
+      ;;
+  };
+
+  return errorMsg;
+}
+
+
 export default function BookingForm({ availableTimeState, availableTimeDispatch }) {
   const [formData, setFormData] = useState({
     //resDate: availableTimeState.currentDate,
@@ -11,24 +34,8 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
   const [errors, setErrors] = useState({ errorCount: 0 });
 
   // Single function to validate fields dynamically
-  const isValid = (name, value) => {
-    let errorMsg = '';
-
-    switch (name) {
-      case "resDate":
-        if (!value) {
-          errorMsg = "Reservation date is required.";
-          console.log(`error resDate`);
-        }
-        break;
-      case 'resTime':
-        if (!value) {
-          errorMsg = "Reservation time is required.";
-        }
-        break;
-      default:
-        ;;
-    };
+  const checkValidityAndSetError = (name, value) => {
+    let errorMsg = isValid(name, value);
 
     setErrors((prev) => ({ ...prev, [name]: errorMsg }));
 
@@ -38,7 +45,7 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Dynamically update the state matching the input's name attribute
-    if (isValid(name, value)) {
+    if (checkValidityAndSetError(name, value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -47,7 +54,7 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
     const { name, value } = e.target;
     console.log(`Name: ${name}, value: ${value}`);
 
-    if (isValid(name, value)) {
+    if (checkValidityAndSetError(name, value)) {
       // Dynamically update the state matching the input's name attribute
       setFormData((prev) => ({ ...prev, [name]: value }));
       availableTimeDispatch({ 'type': 'change-date', 'date': value })
@@ -56,8 +63,8 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevents page reload
-    let hasError = !isValid("resDate", formData.resDate);
-    hasError |= !isValid("resTime", formData.resTime);
+    let hasError = !checkValidityAndSetError("resDate", formData.resDate);
+    hasError |= !checkValidityAndSetError("resTime", formData.resTime);
 
     if (hasError) {
       setTimeout(function () {
@@ -81,25 +88,28 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
         <div className="section-title-text">Reservations</div>
         <div className="section-title-text">Book Now</div>
         <label className="card-title-text"
-          for="res-date">Choose date</label>
+          htmlfor="resDate">Choose date</label>
         <input
           type="date"
           id="resDate"
           name="resDate"
           value={formData.resDate}
           onChange={handleDateChange}
+          aria-label="reservation date"
         />
         {/* Inline Error Message */}
         {errors.resDate && <span style={{ color: "red", fontSize: "12px" }}>{errors.resDate}</span>}
         <label className="card-title-text"
-          htmlfor="res-time">Choose time</label>
+          htmlfor="resTime">Choose time</label>
         <select
           id="resTime"
           name="resTime"
           value={formData.resTime}
-          onChange={handleChange}>
+          onChange={handleChange}
+          aria-label="reservation time">
           {availableTimeState.availableTimes.map((theTime) => (
-            <option value={theTime}>
+            <option value={theTime}
+              aria-label={theTime}>
               {theTime}
             </option>
           ))}
@@ -107,24 +117,31 @@ export default function BookingForm({ availableTimeState, availableTimeDispatch 
         {/* Inline Error Message */}
         {errors.resTime && <span style={{ color: "red", fontSize: "12px" }}>{errors.resTime}</span>}
         <label className="card-title-text"
-          for="guests">Number of guests</label>
+          htmlfor="guests">Number of guests</label>
         <input type="number"
           placeholder="1"
           min="1"
           max="10"
           id="guests"
           name="guests"
-          onChange={handleChange} />
+          onChange={handleChange}
+          aria-label="number of guests" />
         <label className="card-title-text"
-          for="occasion">Occasion</label>
+          htmlfor="occasion">Occasion</label>
         <select id="occasion"
           name="occasion"
-          onChange={handleChange}>
-          <option value="Birthday">Birthday</option>
-          <option value="Anniversary">Anniversary</option>
+          onChange={handleChange}
+          aria-label="occasion">
+          <option
+            value="Birthday"
+            aria-label="birthday">Birthday</option>
+          <option
+            value="Anniversary"
+            aria-label="Anniversary">Anniversary</option>
         </select>
         <button className="app-hero-button"
-          type="submit">
+          type="submit"
+          aria-label="Submit reservation">
           Make Your reservation
         </button>
       </form>
